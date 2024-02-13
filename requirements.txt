@@ -1,0 +1,11 @@
+gymnasium[classic-control]
+gymnasium[atari]
+gymnasium[accept-rom-license]
+torch
+moviepy
+tensorboardX
+notebook
+tensorboard
+opencv-python
+torchvision
+pytorch-ignite
