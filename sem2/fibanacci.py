@@ -7,4 +7,3 @@ def fibonacci(n):
 n = 100
 for fib in fibonacci(n):
     print(fib, end=' ')
-
