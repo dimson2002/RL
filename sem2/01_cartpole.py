@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+from gymnasium.wrappers import RecordVideo
 """
 The Cross-Entropy Method
 1. Play N number of episodes using our current model and environment.
@@ -36,12 +36,10 @@ class Net(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(obs_size, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size, 32),
+            nn.Linear(hidden_size, hidden_size / 2),
             nn.ReLU(),
-            nn.Linear(32, 16),
-            nn.ReLU(),
-            nn.Linear(16, n_actions)
-        )
+            nn.Linear(hidden_size / 2, n_actions)
+            )
 
     def forward(self, x):
         return self.net(x)
@@ -101,7 +99,8 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = gym.make("CartPole-v1")
+    env = gym.make("CartPole-v1", render_mode='rgb_array')
+    env = RecordVideo(env, 'video')
     obs_size = env.observation_space.shape[0]
     n_actions = env.action_space.n
 
@@ -110,6 +109,7 @@ if __name__ == "__main__":
     optimizer = optim.Adam(params=net.parameters(), lr=0.01)
     writer = SummaryWriter(comment=EXPERIMENT_NAME)
     best_episodes = episodes_generator(env, net, BATCH_SIZE)
+    env.start_video_recorder()
 
     for iter_no, batch in enumerate(best_episodes):
         obs_v, acts_v, reward_b, reward_m = filter_batch(batch, PERCENTILE)
@@ -126,6 +126,7 @@ if __name__ == "__main__":
         if reward_m > 199:
             print("Solved!")
             break
+    env.close_video_recorder()
     writer.close()
 
 
