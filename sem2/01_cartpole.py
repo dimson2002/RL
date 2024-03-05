@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+
 from gymnasium.wrappers import RecordVideo
 """
 The Cross-Entropy Method
@@ -108,7 +110,7 @@ if __name__ == "__main__":
     net = Net(obs_size, HIDDEN_SIZE, n_actions)
     loss = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=net.parameters(), lr=0.01)
-    writer = SummaryWriter(comment=EXPERIMENT_NAME)
+    #writer = SummaryWriter(comment=EXPERIMENT_NAME)
     best_episodes = episodes_generator(env, net, BATCH_SIZE)
 
     for iter_no, batch in enumerate(best_episodes):
@@ -120,12 +122,18 @@ if __name__ == "__main__":
         optimizer.step()
         print("%d: loss=%.3f, reward_mean=%.1f, rw_bound=%.1f" % (
             iter_no, loss_v.item(), reward_m, reward_b))
-        writer.add_scalar("loss", loss_v.item(), iter_no)
-        writer.add_scalar("reward_bound", reward_b, iter_no)
-        writer.add_scalar("reward_mean", reward_m, iter_no)
+        #writer.add_scalar("loss", loss_v.item(), iter_no)
+        #writer.add_scalar("reward_bound", reward_b, iter_no)
+        #writer.add_scalar("reward_mean", reward_m, iter_no)
         if reward_m > 199:
             print("Solved!")
             break
-    writer.close()
+    env = gym.make('CartPole-v1', render_mode='rgb_array')
+    env = RecordVideo(env, 'video', episode_trigger=lambda x: x==2)
+    env.reset()
+    env.start_video_recorder()
+    next(episodes_generator(env, net, 1))
+    env.close_video_recorder()
+    env.close()
 
 

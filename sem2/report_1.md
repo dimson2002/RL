@@ -77,6 +77,6 @@ nn.Linear(hidden_size, n_actions)
 ```
 Значение `hidden_size=64`. 
 Для этой архитектуры сходимость достигается в среднем за 33 итераций (от 26 до 39). 
-# Видео с примером работы агента приведено ниже.  
+Видео с примером работы агента приведено ниже.  
 
-# <video src="video/rl-video-episode-0.mp4" width="240"/>
+<video src="video/rl-video-episode-0.mp4" width="240"/>
