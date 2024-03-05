@@ -21,7 +21,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-EXPERIMENT_NAME = "-cartpole_hidden_state_64(2)"  # or -cartpole_net_architecture_v1
+EXPERIMENT_NAME = "-cartpole_hidden_state_64(sloi2)"  # or -cartpole_net_architecture_v1
 HIDDEN_SIZE = 64
 BATCH_SIZE = 16
 PERCENTILE = 70
@@ -36,10 +36,12 @@ class Net(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(obs_size, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size, hidden_size / 2),
+            nn.Linear(hidden_size, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size / 2, n_actions)
-            )
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, n_actions)
+        )
 
     def forward(self, x):
         return self.net(x)
@@ -99,8 +101,7 @@ def filter_batch(batch, percentile):
 
 
 if __name__ == "__main__":
-    env = gym.make("CartPole-v1", render_mode='rgb_array')
-    env = RecordVideo(env, 'video')
+    env = gym.make("CartPole-v1")
     obs_size = env.observation_space.shape[0]
     n_actions = env.action_space.n
 
@@ -109,7 +110,6 @@ if __name__ == "__main__":
     optimizer = optim.Adam(params=net.parameters(), lr=0.01)
     writer = SummaryWriter(comment=EXPERIMENT_NAME)
     best_episodes = episodes_generator(env, net, BATCH_SIZE)
-    env.start_video_recorder()
 
     for iter_no, batch in enumerate(best_episodes):
         obs_v, acts_v, reward_b, reward_m = filter_batch(batch, PERCENTILE)
@@ -126,7 +126,6 @@ if __name__ == "__main__":
         if reward_m > 199:
             print("Solved!")
             break
-    env.close_video_recorder()
     writer.close()
 
 
