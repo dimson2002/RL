@@ -1,11 +1,12 @@
-gymnasium[classic-control]
+gymnasium[classic-control]~=0.29.1
 gymnasium[atari]
 gymnasium[accept-rom-license]
-torch
+torch~=2.2.1
 moviepy
-tensorboardX
+tensorboardX~=2.6.2.2
 notebook
 tensorboard
-opencv-python
+opencv-python~=4.9.0.80
 torchvision
 pytorch-ignite
+numpy~=1.26.4
